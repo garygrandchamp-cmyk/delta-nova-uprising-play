@@ -1,0 +1,30 @@
+// Export delivery only: streamed pieces reconstruct the original exported files byte-for-byte.
+(() => {
+  const files = {"index.wasm": {"parts": ["index.wasm.part1", "index.wasm.part2"], "bytes": 39514754, "type": "application/wasm", "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"}, "index.pck": {"parts": ["index.pck.part1", "index.pck.part2", "index.pck.part3", "index.pck.part4"], "bytes": 91024280, "type": "application/octet-stream", "sha256": "472e78e3cf6e21715522e1ea789574aeacf7f0173f7649f703e05cb384a6c19c"}};
+  const originalFetch = window.fetch.bind(window);
+  const root = new URL('.', document.baseURI);
+  window.fetch = async function(input, options) {
+    const requestURL = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, document.baseURI);
+    const filename = Object.keys(files).find(name => requestURL.href === new URL(name, root).href);
+    if (!filename) return originalFetch(input, options);
+    const file = files[filename];
+    const body = new ReadableStream({
+      async start(controller) {
+        try {
+          for (const name of file.parts) {
+            const response = await originalFetch(new URL(name, root), options);
+            if (!response.ok) throw new Error(`Could not download ${name}: ${response.status}`);
+            const reader = response.body.getReader();
+            for (;;) {
+              const value = await reader.read();
+              if (value.done) break;
+              controller.enqueue(value.value);
+            }
+          }
+          controller.close();
+        } catch (error) { controller.error(error); }
+      }
+    });
+    return new Response(body, {status:200, headers:{'Content-Type':file.type,'Content-Length':String(file.bytes)}});
+  };
+})();

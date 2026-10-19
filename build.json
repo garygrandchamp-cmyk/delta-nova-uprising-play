@@ -1,0 +1,59 @@
+{
+  "canonical_sha256": "63b6736ff3784924820aa5826a649152f29f8e43a7ab6eb51b7be663e5092bc0",
+  "engine": "4.7.2",
+  "delivery": "byte-identical streamed chunks; no gameplay changes",
+  "original_files": {
+    "index.wasm": {
+      "parts": [
+        "index.wasm.part1",
+        "index.wasm.part2"
+      ],
+      "bytes": 39514754,
+      "type": "application/wasm",
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    "index.pck": {
+      "parts": [
+        "index.pck.part1",
+        "index.pck.part2",
+        "index.pck.part3",
+        "index.pck.part4"
+      ],
+      "bytes": 91024280,
+      "type": "application/octet-stream",
+      "sha256": "472e78e3cf6e21715522e1ea789574aeacf7f0173f7649f703e05cb384a6c19c"
+    }
+  },
+  "chunks": [
+    {
+      "name": "index.wasm.part1",
+      "bytes": 23068672,
+      "sha256": "7c7e6d6885e1a724ba02b6d22d6ea8121eb5feb881085bee21cc15f550bdd2f9"
+    },
+    {
+      "name": "index.wasm.part2",
+      "bytes": 16446082,
+      "sha256": "38785b94b80c5dea4c3156bd9e6378be730fb7fd23b53cd1f8c0adc47f0e1be7"
+    },
+    {
+      "name": "index.pck.part1",
+      "bytes": 23068672,
+      "sha256": "57b4051be7f94351c2fc7a14193b147c7fe3cd8a8e6b0eb397fd7ac986a2c8af"
+    },
+    {
+      "name": "index.pck.part2",
+      "bytes": 23068672,
+      "sha256": "71303015f42c89e1753f971706a9317785466fc52560e8bd84a9ed52acf25a7e"
+    },
+    {
+      "name": "index.pck.part3",
+      "bytes": 23068672,
+      "sha256": "291991f6dbbf19f20e6d498501ddabd10a555e5a92bae014f9f78521f6cf2742"
+    },
+    {
+      "name": "index.pck.part4",
+      "bytes": 21818264,
+      "sha256": "fb0fcbf954dbb974f18cdabe8d2a7b728af5710d7d01ceacdbdd296860ebabef"
+    }
+  ]
+}
