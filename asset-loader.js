@@ -1,6 +1,6 @@
 // Export delivery only: streamed pieces reconstruct the original exported files byte-for-byte.
 (() => {
-  const files = {"index.wasm": {"parts": ["index.wasm.part1", "index.wasm.part2"], "bytes": 39514754, "type": "application/wasm", "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"}, "index.pck": {"parts": ["index.pck.part1", "index.pck.part2", "index.pck.part3", "index.pck.part4", "index.pck.part5", "index.pck.part6", "index.pck.part7", "index.pck.part8", "index.pck.part9"], "bytes": 200202332, "type": "application/octet-stream", "sha256": "ab8e917080ab44115ecc87a7fb134e010ceec30df91e7bdc9325b1535fe67418"}};
+  const files = {"index.wasm": {"parts": ["index.wasm.part1", "index.wasm.part2"], "bytes": 39514754, "type": "application/wasm", "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"}, "index.pck": {"parts": ["index.pck.part1", "index.pck.part2", "index.pck.part3", "index.pck.part4", "index.pck.part5", "index.pck.part6", "index.pck.part7", "index.pck.part8", "index.pck.part9"], "bytes": 200202860, "type": "application/octet-stream", "sha256": "54d2a14d018b93477f99e54ab4e655966fdbb8722ae5f5f43d9063e187e55e1d"}};
   const originalFetch = window.fetch.bind(window);
   const root = new URL('.', document.baseURI);
   window.fetch = async function(input, options) {
