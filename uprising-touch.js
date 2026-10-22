@@ -40,7 +40,11 @@
     const show = Boolean(callback && active && capable() && landscape() && !document.hidden);
     if (!show && !root.hidden) clear();
     root.hidden = !show;
-    hint.hidden = !(callback && capable() && screen === 'play' && !landscape() && !document.hidden);
+    // Portrait mid-run: the controls vanish, so pause rather than leave the player defenceless.
+    if (callback && active && screen === 'play' && capable() && !landscape() && !document.hidden) {
+      clear(); active = false; emit('pause', true);
+    }
+    hint.hidden = !(callback && capable() && ['play', 'pause'].includes(screen) && !landscape() && !document.hidden);
     if (callback && capable() && !mobileNotified) { mobileNotified = true; emit('mobile', true); }
   }
   function release(id) {
