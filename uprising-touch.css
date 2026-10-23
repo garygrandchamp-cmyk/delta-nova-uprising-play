@@ -4,9 +4,10 @@
 #uprising-touch > div { position: absolute; display: flex; gap: 7px; pointer-events: none; }
 #uprising-touch button { pointer-events: auto; touch-action: none; width: 60px; min-height: 48px; padding: 3px; color: inherit; background: #102537d9; border: 1px solid #70e9ce; border-radius: 12px; font: inherit; -webkit-tap-highlight-color: transparent; }
 #uprising-touch button.held { background: #386d76ed; border-color: white; }
-#uprising-touch .touch-movement { left: var(--side-l); bottom: var(--base); }
+#uprising-touch .touch-movement { left: var(--side-l); bottom: var(--base); display: grid; grid-template-columns: repeat(3, 60px); }
 #uprising-touch .touch-movement button { width: 60px; height: 62px; font-size: 22px; }
-#uprising-touch .touch-drop { left: var(--side-l); bottom: calc(var(--base) + 69px); }
+#uprising-touch .touch-movement button:nth-child(-n+3) { height: 52px; min-height: 0; }
+#uprising-touch .touch-movement [data-action="drop"] { font-size: 16px; opacity: .8; }
 #uprising-touch .touch-actions { right: var(--side-r); bottom: var(--base); display: grid; grid-template-columns: repeat(2, 60px); }
 #uprising-touch .touch-actions button { min-height: 52px; }
 #uprising-touch .touch-utility { right: var(--side-r); bottom: calc(var(--base) + 118px); display: grid; grid-template-columns: repeat(2, 60px); }
@@ -15,5 +16,7 @@
 #uprising-rotate { position: fixed; bottom: max(8px, env(safe-area-inset-bottom)); left: 12px; right: 12px; text-align: center; pointer-events: none; background: #102537e8; padding: 10px; }
 @media (max-height: 360px) {
  #uprising-touch .touch-actions button { min-height: 44px; }
+ #uprising-touch .touch-movement button { height: 54px; }
+ #uprising-touch .touch-movement button:nth-child(-n+3) { height: 44px; }
  #uprising-touch .touch-utility { bottom: calc(var(--base) + 102px); }
 }

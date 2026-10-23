@@ -1,4 +1,5 @@
-/* Landscape P1 controls. Loaded before Godot starts; no synthetic DOM keys. */
+/* Landscape P1 controls. Loaded before Godot starts; no synthetic DOM keys.
+   The left pad is a d-pad: a button's data-action may hold several actions (◤ = left + up). */
 (() => {
   'use strict';
   let callback = null, active = false, screen = '', usedTouch = false, mobileNotified = false;
@@ -8,10 +9,9 @@
   root.setAttribute('aria-label', 'Player one touch controls');
   root.hidden = true;
   const groups = {
-    movement: [['left', '◀'], ['right', '▶']],
+    movement: [['left up', '◤'], ['up', '▲'], ['right up', '◥'], ['left', '◀'], ['drop', '▼'], ['right', '▶']],
     actions: [['melee', 'POP'], ['jump', 'JUMP'], ['slide', 'SLIDE'], ['fire', 'BUBBLE']],
     utility: [['flip', 'FLIP'], ['defense', 'DEFEND'], ['special', 'SPECIAL'], ['cycle_special', 'NEXT']],
-    drop: [['drop', 'DROP']],
     pause: [['pause', 'PAUSE']]
   };
   for (const [group, actions] of Object.entries(groups)) {
@@ -19,7 +19,7 @@
     for (const [action, label] of actions) {
       const button = document.createElement('button');
       button.type = 'button'; button.dataset.action = action; button.textContent = label;
-      button.setAttribute('aria-label', action.replaceAll('_', ' '));
+      button.setAttribute('aria-label', action.replaceAll('_', ' ').replace(' up', ' and up'));
       panel.append(button);
     }
     root.append(panel);
@@ -47,19 +47,27 @@
     hint.hidden = !(callback && capable() && ['play', 'pause'].includes(screen) && !landscape() && !document.hidden);
     if (callback && capable() && !mobileNotified) { mobileNotified = true; emit('mobile', true); }
   }
-  function release(id) {
-    const button = pointers.get(id); if (!button) return;
-    pointers.delete(id);
-    const action = button.dataset.action, count = (counts.get(action) || 1) - 1;
-    if (count > 0) counts.set(action, count);
-    else { counts.delete(action); button.classList.remove('held'); emit(action, false); }
+  const actionsOf = button => button.dataset.action.split(' ');
+  function release(id, button = pointers.get(id)) {
+    if (!button) return;
+    if (pointers.get(id) === button) pointers.delete(id);
+    if (![...pointers.values()].includes(button)) button.classList.remove('held');
+    for (const action of actionsOf(button)) {
+      const count = (counts.get(action) || 1) - 1;
+      if (count > 0) counts.set(action, count);
+      else { counts.delete(action); emit(action, false); }
+    }
   }
   function press(id, button) {
-    pointers.set(id, button);
-    const action = button.dataset.action, count = counts.get(action) || 0;
-    counts.set(action, count + 1); button.classList.add('held');
-    if (!count) emit(action, true);
+    pointers.set(id, button); button.classList.add('held');
+    for (const action of actionsOf(button)) {
+      const count = counts.get(action) || 0;
+      counts.set(action, count + 1);
+      if (!count) emit(action, true);
+    }
   }
+  // A thumb can slide across the d-pad, but never onto DROP: that takes a deliberate tap.
+  const slides = button => button.parentElement.classList.contains('touch-movement') && button.dataset.action !== 'drop';
   root.addEventListener('pointerdown', event => {
     const button = event.target.closest('button[data-action]');
     if (!button || !active || root.hidden || event.button !== 0) return;
@@ -69,16 +77,18 @@
       clear(); active = false; emit('pause', true); render(); return;
     }
     button.setPointerCapture(event.pointerId);
-    if (button.parentElement.classList.contains('touch-movement')) movementPointers.add(event.pointerId);
+    if (slides(button)) movementPointers.add(event.pointerId);
     press(event.pointerId, button);
   });
   root.addEventListener('pointermove', event => {
     if (!movementPointers.has(event.pointerId)) return;
     const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('button[data-action]');
-    const next = target && ['left', 'right'].includes(target.dataset.action) ? target : null;
-    if (pointers.get(event.pointerId) === next) return;
-    release(event.pointerId);
+    const next = target && slides(target) ? target : null;
+    const previous = pointers.get(event.pointerId);
+    if (previous === next) return;
+    // Press before releasing so an action both buttons share (◥ to ▶ keeps right) never drops.
     if (next) press(event.pointerId, next);
+    if (previous) release(event.pointerId, previous);
   });
   for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
     root.addEventListener(type, event => { event.preventDefault(); release(event.pointerId); movementPointers.delete(event.pointerId); });
